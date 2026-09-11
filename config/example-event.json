@@ -1,0 +1,13 @@
+{
+  "summary": "Model output contains an unexpected instruction to bypass approval and disable logging.",
+  "source": "operator-demo",
+  "category": "governance",
+  "severity_hint": "high",
+  "requested_action": "quarantine",
+  "details": {
+    "environment": "sandbox",
+    "data_classification": "synthetic",
+    "external_execution": false
+  }
+}
+

@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use Al-Mehdi in research, please cite this software."
+title: "Al-Mehdi: A Human-Governed 100-Agent AI Safety Laboratory"
+type: software
+version: 0.1.0
+date-released: 2026-09-11
+authors:
+  - family-names: Iqbal
+    given-names: Hassam
+    orcid: "https://orcid.org/0000-0002-1438-9403"
+repository-code: "https://github.com/hassamiqbal/al-mehdi-ai-safety"
+url: "https://github.com/hassamiqbal/al-mehdi-ai-safety"
+abstract: >-
+  Al-Mehdi is a defensive research platform coordinating 100 bounded software
+  agents for explainable AI-safety monitoring, governance and incident-response
+  simulation while preserving human authority and disabling external actuation.
+keywords:
+  - artificial intelligence safety
+  - multi-agent systems
+  - human oversight
+  - incident response
+  - AI governance
+

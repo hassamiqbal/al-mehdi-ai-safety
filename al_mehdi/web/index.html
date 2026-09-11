@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Al-Mehdi · Human-Governed AI Safety</title>
+  <style>
+    :root { color-scheme: dark; --bg:#07110f; --panel:#0e1d19; --line:#20443a; --mint:#66e0b8; --text:#f2f8f6; --muted:#a4bbb3; --warn:#ffc96b; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif; background:radial-gradient(circle at 80% -10%,#164c3d 0,transparent 34%),var(--bg); color:var(--text); }
+    main { width:min(1180px,calc(100% - 32px)); margin:auto; padding:40px 0 64px; }
+    header { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; margin-bottom:28px; }
+    .eyebrow { color:var(--mint); text-transform:uppercase; letter-spacing:.14em; font-size:.74rem; font-weight:750; }
+    h1 { font-size:clamp(2.4rem,6vw,5.2rem); line-height:.94; margin:.45rem 0 1rem; max-width:800px; }
+    .lede { color:var(--muted); max-width:760px; font-size:1.05rem; line-height:1.6; }
+    .badge { border:1px solid var(--line); background:#0c1916cc; padding:10px 14px; border-radius:999px; white-space:nowrap; color:var(--mint); }
+    .grid { display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
+    .panel { background:linear-gradient(145deg,#10231eeb,#0a1714eb); border:1px solid var(--line); border-radius:20px; padding:22px; box-shadow:0 24px 70px #0004; }
+    .metric { grid-column:span 3; }
+    .metric strong { display:block; font-size:2.1rem; margin-top:8px; }
+    .metric span,.muted { color:var(--muted); }
+    .control { grid-column:span 5; }
+    .result { grid-column:span 7; min-height:360px; }
+    h2 { margin:0 0 16px; font-size:1.15rem; }
+    label { display:block; color:var(--muted); margin-bottom:8px; }
+    select,button { width:100%; border-radius:12px; border:1px solid var(--line); padding:12px 14px; font:inherit; }
+    select { background:#07110f; color:var(--text); margin-bottom:12px; }
+    button { background:var(--mint); color:#04100c; font-weight:800; cursor:pointer; }
+    button:hover { filter:brightness(1.08); }
+    button:disabled { opacity:.55; cursor:wait; }
+    .notice { margin-top:16px; padding:14px; background:#1f1a0d; border:1px solid #5a4820; border-radius:12px; color:var(--warn); line-height:1.5; }
+    pre { margin:0; overflow:auto; white-space:pre-wrap; color:#c8e7dd; line-height:1.45; font-size:.85rem; max-height:500px; }
+    footer { color:var(--muted); margin-top:24px; font-size:.9rem; }
+    @media (max-width:800px) { header{display:block}.badge{display:inline-block;margin-top:12px}.metric{grid-column:span 6}.control,.result{grid-column:1/-1} }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <div class="eyebrow">Human authority · evidence · reversibility</div>
+      <h1>Al-Mehdi AI Safety Council</h1>
+      <p class="lede">A research platform where 100 bounded agents examine synthetic safety incidents, reach an explainable consensus and preserve a tamper-evident audit trail. Agents can recommend; only humans can authorise action.</p>
+    </div>
+    <div class="badge" id="health">Checking system…</div>
+  </header>
+  <section class="grid">
+    <div class="panel metric"><span>Safety agents</span><strong id="agents">100</strong></div>
+    <div class="panel metric"><span>Specialist teams</span><strong id="teams">10</strong></div>
+    <div class="panel metric"><span>Execution mode</span><strong style="font-size:1.35rem">Advisory</strong></div>
+    <div class="panel metric"><span>External actions</span><strong style="font-size:1.35rem">Disabled</strong></div>
+    <div class="panel control">
+      <h2>Safe scenario laboratory</h2>
+      <label for="scenario">Choose a synthetic incident</label>
+      <select id="scenario"></select>
+      <button id="run">Run 100-agent review</button>
+      <div class="notice">This dashboard does not control external systems. It produces recommendations for a human operator and stores the result locally.</div>
+    </div>
+    <div class="panel result">
+      <h2>Consensus report</h2>
+      <pre id="output">Select a scenario to begin.</pre>
+    </div>
+  </section>
+  <footer>Al-Mehdi v0.1.0 · Local research environment · No autonomous retaliation or external actuation</footer>
+</main>
+<script>
+const output=document.getElementById('output'),run=document.getElementById('run'),scenario=document.getElementById('scenario');
+async function json(url,options){const r=await fetch(url,options);const data=await r.json();if(!r.ok)throw new Error(data.message||data.error);return data}
+async function init(){try{const [health,scenarios]=await Promise.all([json('/health'),json('/api/v1/scenarios')]);document.getElementById('health').textContent=health.status==='ok'?'System healthy':'System degraded';document.getElementById('agents').textContent=health.agents;document.getElementById('teams').textContent=health.teams;scenarios.scenarios.forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name.replaceAll('_',' ');scenario.appendChild(option)})}catch(e){document.getElementById('health').textContent='Connection error';output.textContent=e.message}}
+run.addEventListener('click',async()=>{run.disabled=true;output.textContent='Consulting 100 agents…';try{const report=await json('/api/v1/simulate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:scenario.value})});const d=report.decision;output.textContent=JSON.stringify({run_id:d.run_id,status:d.status,severity:d.severity,consensus_risk:d.consensus_risk,human_approval_required:d.human_approval_required,execution_authorized:d.execution_authorized,teams_reporting:d.teams_reporting,team_scores:d.team_scores,recommendations:d.recommendations,policy_reasons:d.policy_reasons},null,2)}catch(e){output.textContent=e.message}finally{run.disabled=false}});
+init();
+</script>
+</body>
+</html>

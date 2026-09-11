@@ -1,0 +1,28 @@
+name: Bug report
+description: Report a reproducible defect without including secrets or sensitive data.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, private data, exploit payloads or information from systems you do not own.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Safe reproduction
+      description: Use synthetic inputs and a local environment.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: System check
+      description: Paste the non-sensitive output of `al-mehdi doctor`.
+

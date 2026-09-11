@@ -1,0 +1,2 @@
+"""Packaged dashboard assets."""
+

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "al-mehdi-ai-safety"
+version = "0.1.0"
+description = "A human-governed, 100-agent AI safety monitoring and incident-response laboratory."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Hassam Iqbal" }
+]
+keywords = ["ai-safety", "multi-agent", "incident-response", "governance", "human-oversight"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = []
+
+[project.scripts]
+al-mehdi = "al_mehdi.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["al_mehdi*"]
+
+[tool.setuptools.package-data]
+al_mehdi = ["web/*.html"]
