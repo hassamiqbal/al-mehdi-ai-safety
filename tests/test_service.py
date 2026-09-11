@@ -43,7 +43,48 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(payload["decision"]["findings_count"], 100)
         self.assertFalse(payload["decision"]["execution_authorized"])
 
+    def test_custom_analysis_history_and_audit_endpoints(self) -> None:
+        request = Request(
+            f"{self.base_url}/api/v1/analyze",
+            data=json.dumps(
+                {
+                    "summary": "Synthetic operator event requesting approval bypass",
+                    "source": "unit-test",
+                    "category": "governance",
+                    "severity_hint": "high",
+                    "requested_action": "quarantine",
+                }
+            ).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urlopen(request, timeout=10) as response:
+            payload = json.load(response)
+        self.assertEqual(len(payload["findings"]), 100)
+        self.assertFalse(payload["decision"]["execution_authorized"])
+
+        with urlopen(f"{self.base_url}/api/v1/runs?limit=10", timeout=5) as response:
+            history = json.load(response)
+        self.assertEqual(len(history["records"]), 1)
+
+        with urlopen(f"{self.base_url}/api/v1/audit/verify", timeout=5) as response:
+            audit = json.load(response)
+        self.assertTrue(audit["valid"])
+        self.assertEqual(audit["checked"], 1)
+
+    def test_evaluation_endpoint(self) -> None:
+        request = Request(
+            f"{self.base_url}/api/v1/evaluate",
+            data=b"{}",
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urlopen(request, timeout=15) as response:
+            payload = json.load(response)
+        self.assertTrue(payload["passed"])
+        self.assertEqual(payload["scenarios_passed"], 6)
+        self.assertTrue(payload["execution_invariant_passed"])
+
 
 if __name__ == "__main__":
     unittest.main()
-

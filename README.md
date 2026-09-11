@@ -19,6 +19,9 @@ The name *Al-Mehdi* is used here in the sense intended by the project: a protect
 - Tamper-evident SQLite audit trail using a SHA-256 hash chain
 - Six safe synthetic incident scenarios
 - Local JSON API and responsive web dashboard
+- Custom-event analysis with structured consensus and team-level evidence
+- Recent-run history and audit verification in the operator console
+- Built-in six-scenario regression benchmark
 - Command-line interface for beginners and operators
 - Jupyter notebook walkthrough
 - Automated tests, CI, Docker and security documentation
@@ -58,12 +61,12 @@ Every agent has a stable ID, mission, signal vocabulary and `recommend_only` act
 
 ## Start here — no Jupyter required
 
-You need Python 3.10 or newer.
+You need Python 3.10 or newer. On macOS, use `python3`; on Windows, use `py`.
 
 ```bash
 git clone https://github.com/hassamiqbal/al-mehdi-ai-safety.git
 cd al-mehdi-ai-safety
-python -m venv .venv
+python3 -m venv .venv
 ```
 
 Activate the environment:
@@ -98,6 +101,20 @@ al-mehdi serve
 
 Open <http://127.0.0.1:8080>. The server deliberately binds only to your own computer by default.
 
+Keep that Terminal window open while using the dashboard. GitHub makes the source code public;
+it does not host this local Python service. The `127.0.0.1` address is accessible only from the
+computer currently running `al-mehdi serve`.
+
+## Using the operator console
+
+1. Run a safe scenario and inspect the consensus risk, escalation status and policy reasons.
+2. Open **Custom event** to submit a synthetic or explicitly authorised event description.
+3. Review the ten team scores and strongest agent findings.
+4. Run the six-scenario benchmark to verify expected decisions and the no-execution invariant.
+5. Verify the audit chain and inspect recent locally stored reviews.
+
+The benchmark performs 600 bounded assessments: 100 agents across each of six scenarios.
+
 ## Jupyter notebook
 
 GitHub is the correct main home for the project. Jupyter is useful only for learning and experiments. The guided notebook is at [`notebooks/01_beginner_walkthrough.ipynb`](notebooks/01_beginner_walkthrough.ipynb).
@@ -121,6 +138,7 @@ Start the service with `al-mehdi serve`, then use:
 | `GET` | `/api/v1/scenarios` | Available safe simulations |
 | `POST` | `/api/v1/simulate` | Run a named synthetic scenario |
 | `POST` | `/api/v1/analyze` | Analyze a manually described event |
+| `POST` | `/api/v1/evaluate` | Run the six-scenario safety benchmark |
 | `GET` | `/api/v1/runs` | Recent hash-chained run records |
 | `GET` | `/api/v1/audit/verify` | Verify audit-chain integrity |
 
@@ -145,8 +163,8 @@ The CI workflow repeats these checks on Python 3.10, 3.11 and 3.12.
 ## Docker
 
 ```bash
-docker build -t al-mehdi:0.1.0 .
-docker run --rm -p 127.0.0.1:8080:8080 al-mehdi:0.1.0
+docker build -t al-mehdi:0.2.0 .
+docker run --rm -p 127.0.0.1:8080:8080 al-mehdi:0.2.0
 ```
 
 No managed-cloud deployment is claimed by this repository.
@@ -165,15 +183,17 @@ See [Safety policy](docs/SAFETY_POLICY.md), [threat model](docs/THREAT_MODEL.md)
 
 ## Current limitations
 
-- Version 0.1.0 is a deterministic safety-control prototype, not an artificial general intelligence defence system.
+- Version 0.2.0 is a deterministic safety-control prototype, not an artificial general intelligence defence system.
 - Agent judgments depend on explicit rules and provided event descriptions.
+- No external or generative-LLM reasoning provider is connected in the default configuration.
 - The audit chain detects local modification but is not yet anchored to an external trusted timestamp.
 - Authentication and real infrastructure connectors are intentionally not implemented.
 - No external system should rely on this prototype for automatic enforcement.
 
 ## Repository status
 
-This repository should remain **private during early development and safety review**. A public release should occur only after the threat model, documentation, tests, licensing and misuse review are approved.
+The repository is a **public alpha research release**. It contains no secrets, private datasets,
+external-system credentials or autonomous actuation. Do not use it as a production security control.
 
 ## Responsible contribution
 
@@ -186,4 +206,3 @@ Citation metadata is available in [`CITATION.cff`](CITATION.cff).
 ## License
 
 MIT License. See [LICENSE](LICENSE). Safety, privacy and acceptable-use responsibilities still apply.
-

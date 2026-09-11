@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use Al-Mehdi in research, please cite this software."
 title: "Al-Mehdi: A Human-Governed 100-Agent AI Safety Laboratory"
 type: software
-version: 0.1.0
+version: 0.2.0
 date-released: 2026-09-11
 authors:
   - family-names: Iqbal
@@ -20,4 +20,3 @@ keywords:
   - human oversight
   - incident response
   - AI governance
-

@@ -37,5 +37,4 @@ Al-Mehdi must not include:
 | High | Recommend reversible containment |
 | Critical | Recommend human-controlled emergency stop |
 
-No response level authorises execution in version 0.1.0.
-
+No response level authorises execution in version 0.2.0.

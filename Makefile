@@ -1,4 +1,4 @@
-.PHONY: install test verify doctor demo serve
+.PHONY: install test verify doctor demo evaluate serve
 
 install:
 	python -m pip install -e .
@@ -16,6 +16,8 @@ doctor:
 demo:
 	python -m al_mehdi demo prompt_injection
 
+evaluate:
+	python -m al_mehdi evaluate
+
 serve:
 	python -m al_mehdi serve
-

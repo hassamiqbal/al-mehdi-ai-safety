@@ -1,7 +1,7 @@
 services:
   al-mehdi:
     build: .
-    image: al-mehdi:0.1.0
+    image: al-mehdi:0.2.0
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
@@ -16,4 +16,3 @@ services:
 
 volumes:
   al_mehdi_data:
-

@@ -3,71 +3,195 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Local operator console for the human-governed Al-Mehdi AI Safety Council.">
   <title>Al-Mehdi · Human-Governed AI Safety</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307110f'/%3E%3Cpath d='M15 43 32 13l17 30h-9l-8-15-8 15Z' fill='%2366e0b8'/%3E%3Ccircle cx='32' cy='45' r='5' fill='%23ffc96b'/%3E%3C/svg%3E">
   <style>
-    :root { color-scheme: dark; --bg:#07110f; --panel:#0e1d19; --line:#20443a; --mint:#66e0b8; --text:#f2f8f6; --muted:#a4bbb3; --warn:#ffc96b; }
-    * { box-sizing:border-box; }
-    body { margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif; background:radial-gradient(circle at 80% -10%,#164c3d 0,transparent 34%),var(--bg); color:var(--text); }
-    main { width:min(1180px,calc(100% - 32px)); margin:auto; padding:40px 0 64px; }
-    header { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; margin-bottom:28px; }
-    .eyebrow { color:var(--mint); text-transform:uppercase; letter-spacing:.14em; font-size:.74rem; font-weight:750; }
-    h1 { font-size:clamp(2.4rem,6vw,5.2rem); line-height:.94; margin:.45rem 0 1rem; max-width:800px; }
-    .lede { color:var(--muted); max-width:760px; font-size:1.05rem; line-height:1.6; }
-    .badge { border:1px solid var(--line); background:#0c1916cc; padding:10px 14px; border-radius:999px; white-space:nowrap; color:var(--mint); }
-    .grid { display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
-    .panel { background:linear-gradient(145deg,#10231eeb,#0a1714eb); border:1px solid var(--line); border-radius:20px; padding:22px; box-shadow:0 24px 70px #0004; }
-    .metric { grid-column:span 3; }
-    .metric strong { display:block; font-size:2.1rem; margin-top:8px; }
-    .metric span,.muted { color:var(--muted); }
-    .control { grid-column:span 5; }
-    .result { grid-column:span 7; min-height:360px; }
-    h2 { margin:0 0 16px; font-size:1.15rem; }
-    label { display:block; color:var(--muted); margin-bottom:8px; }
-    select,button { width:100%; border-radius:12px; border:1px solid var(--line); padding:12px 14px; font:inherit; }
-    select { background:#07110f; color:var(--text); margin-bottom:12px; }
-    button { background:var(--mint); color:#04100c; font-weight:800; cursor:pointer; }
-    button:hover { filter:brightness(1.08); }
-    button:disabled { opacity:.55; cursor:wait; }
-    .notice { margin-top:16px; padding:14px; background:#1f1a0d; border:1px solid #5a4820; border-radius:12px; color:var(--warn); line-height:1.5; }
-    pre { margin:0; overflow:auto; white-space:pre-wrap; color:#c8e7dd; line-height:1.45; font-size:.85rem; max-height:500px; }
-    footer { color:var(--muted); margin-top:24px; font-size:.9rem; }
-    @media (max-width:800px) { header{display:block}.badge{display:inline-block;margin-top:12px}.metric{grid-column:span 6}.control,.result{grid-column:1/-1} }
+    :root{color-scheme:dark;--bg:#050b0a;--panel:#0c1714;--panel2:#101f1b;--line:#203c34;--strong:#2d594d;--mint:#70e5bd;--mintdark:#123d32;--text:#f3f8f6;--muted:#9bb1aa;--warn:#ffc96b;--danger:#ff8a82;--radius:18px;--shadow:0 28px 80px rgba(0,0,0,.28)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}
+    body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at 88% -5%,rgba(39,125,99,.32),transparent 30rem),radial-gradient(circle at 5% 45%,rgba(29,75,63,.16),transparent 24rem),var(--bg);color:var(--text)}
+    button,input,select,textarea{font:inherit}button,a{-webkit-tap-highlight-color:transparent}
+    button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid rgba(112,229,189,.35);outline-offset:2px}
+    .shell{width:min(1240px,calc(100% - 32px));margin:auto;padding:26px 0 64px}
+    .topbar,.brand,.health,.section-head,.status-line,footer{display:flex;align-items:center}
+    .topbar,.section-head,footer{justify-content:space-between}.topbar{gap:20px;margin-bottom:24px}.brand{gap:12px}
+    .mark{width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--strong);border-radius:12px;background:linear-gradient(145deg,#153d32,#0a1714);color:var(--mint);font-weight:900;letter-spacing:-.08em}
+    .brand strong{display:block;font-size:1rem}.brand span{color:var(--muted);font-size:.78rem}
+    .health{gap:8px;border:1px solid var(--line);background:rgba(12,23,20,.9);padding:9px 12px;border-radius:999px;color:var(--muted);font-size:.86rem;white-space:nowrap}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 5px rgba(255,201,107,.08)}.health.ok{color:var(--mint)}.health.ok .dot{background:var(--mint);box-shadow:0 0 0 5px rgba(112,229,189,.08)}.health.bad{color:var(--danger)}.health.bad .dot{background:var(--danger)}
+    .intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end;margin:28px 0 20px}
+    .eyebrow{color:var(--mint);text-transform:uppercase;letter-spacing:.14em;font-size:.75rem;font-weight:800}
+    h1{margin:.5rem 0 .8rem;max-width:850px;font-size:clamp(2.35rem,6vw,4.9rem);line-height:.96;letter-spacing:-.055em}
+    .lede{max-width:760px;margin:0;color:var(--muted);font-size:1.02rem;line-height:1.65}
+    .mode-lock{color:var(--mint);font-size:.9rem;text-align:right}.mode-lock strong{display:block;margin-top:4px;color:var(--text);font-size:1.05rem}
+    .metrics,.workspace,.lower-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}.metrics{margin-bottom:14px}
+    .panel{background:linear-gradient(145deg,rgba(16,31,27,.96),rgba(8,18,15,.97));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .metric{grid-column:span 3;padding:17px 18px}.metric span{display:block;color:var(--muted);font-size:.8rem}.metric strong{display:block;margin-top:6px;font-size:1.55rem;letter-spacing:-.03em}.metric strong.safe{color:var(--mint);font-size:1.05rem;margin-top:11px}
+    .controls{grid-column:span 5;padding:22px}.report{grid-column:span 7;padding:22px;min-height:510px}
+    .section-head{align-items:flex-start;gap:16px;margin-bottom:18px}h2{margin:0;font-size:1.12rem;letter-spacing:-.015em}h3{margin:0 0 10px;font-size:.94rem}
+    .section-head p,.helper{margin:5px 0 0;color:var(--muted);font-size:.84rem;line-height:1.5}
+    .tabs{display:flex;gap:7px;margin-bottom:18px;padding:4px;border:1px solid var(--line);background:#07100e;border-radius:13px}
+    .tab{width:auto;flex:1;padding:9px 10px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-weight:750;cursor:pointer}.tab[aria-selected="true"]{color:var(--text);background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line)}.tab-panel[hidden]{display:none}
+    label{display:block;margin-bottom:7px;color:#c5d4cf;font-size:.84rem;font-weight:700}
+    input,select,textarea{width:100%;border:1px solid var(--line);border-radius:11px;background:#060e0c;color:var(--text);padding:11px 12px}textarea{min-height:108px;resize:vertical;line-height:1.45}input::placeholder,textarea::placeholder{color:#668078}
+    .field{margin-bottom:13px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .primary,.secondary{width:100%;border:1px solid transparent;border-radius:11px;padding:11px 14px;font-weight:850;cursor:pointer}.primary{background:var(--mint);color:#03100c}.secondary{background:#122620;border-color:var(--strong);color:var(--text)}.primary:hover,.secondary:hover{filter:brightness(1.08)}button:disabled{opacity:.52;cursor:wait}
+    .notice{margin-top:14px;padding:12px 13px;border:1px solid #564822;border-radius:11px;background:#1a160b;color:var(--warn);font-size:.82rem;line-height:1.5}
+    .empty{min-height:405px;display:grid;place-items:center;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px;padding:30px}.empty strong{display:block;margin-bottom:6px;color:var(--text);font-size:1.05rem}
+    .report-summary{display:grid;grid-template-columns:132px 1fr;gap:18px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:14px;background:rgba(5,12,10,.55)}
+    .risk-ring{--risk:0;width:112px;height:112px;display:grid;place-items:center;border-radius:50%;background:conic-gradient(var(--mint) calc(var(--risk)*1%),#193028 0);position:relative}.risk-ring:after{content:"";position:absolute;inset:9px;border-radius:inherit;background:#091310}.risk-number{position:relative;z-index:1;text-align:center}.risk-number strong{display:block;font-size:1.65rem;line-height:1}.risk-number span{color:var(--muted);font-size:.72rem}
+    .status-line{flex-wrap:wrap;gap:8px;margin-bottom:10px}.pill{display:inline-flex;padding:5px 9px;border-radius:999px;background:var(--mintdark);color:var(--mint);font-size:.76rem;font-weight:850;text-transform:capitalize}.pill.high,.pill.critical{background:#351917;color:#ffaea7}.pill.medium{background:#352b12;color:var(--warn)}
+    .event-summary{margin:0;color:#d9e6e2;line-height:1.48}.decision-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.fact{padding:9px 10px;border:1px solid var(--line);border-radius:10px}.fact span{display:block;color:var(--muted);font-size:.7rem}.fact strong{display:block;margin-top:3px;font-size:.83rem}
+    .report-body{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.clean-list{margin:0;padding-left:19px;color:#d4e2dd;font-size:.86rem;line-height:1.55}.clean-list li+li{margin-top:7px}
+    details{margin-top:16px;border-top:1px solid var(--line);padding-top:13px}summary{cursor:pointer;color:var(--muted);font-size:.82rem}pre{margin:12px 0 0;overflow:auto;white-space:pre-wrap;color:#c8e7dd;line-height:1.45;font-size:.78rem;max-height:390px}
+    .lower-grid{margin-top:14px}.team-panel{grid-column:span 7;padding:22px}.ops-panel{grid-column:span 5;padding:22px}.team-bars{display:grid;gap:10px}.team-row{display:grid;grid-template-columns:132px 1fr 46px;gap:10px;align-items:center;font-size:.8rem}.team-name{overflow:hidden;text-overflow:ellipsis;text-transform:capitalize;color:#d7e5e0}.bar{height:9px;border-radius:999px;background:#182d27;overflow:hidden}.bar>span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#2d9778,var(--mint))}.team-score{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+    .findings{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.finding{border:1px solid var(--line);border-radius:11px;padding:11px;background:rgba(5,12,10,.45)}.finding-head{display:flex;justify-content:space-between;gap:8px;color:#d9e7e2;font-size:.78rem;font-weight:800}.finding p{margin:7px 0 0;color:var(--muted);font-size:.74rem;line-height:1.45}.signal{color:var(--warn)!important}
+    .ops-stack{display:grid;gap:12px}.op-card{border:1px solid var(--line);border-radius:13px;padding:14px;background:rgba(5,12,10,.45)}.op-card p{margin:6px 0 12px;color:var(--muted);font-size:.8rem;line-height:1.45}.op-result{min-height:22px;margin-top:10px;color:var(--muted);font-size:.8rem;line-height:1.45}.op-result.pass{color:var(--mint)}.op-result.fail{color:var(--danger)}
+    .history-panel{margin-top:14px;padding:22px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:.8rem}th{color:var(--muted);font-size:.73rem;text-transform:uppercase;letter-spacing:.06em}td{color:#d9e5e1}td.event-cell{max-width:460px}.mini-status{color:var(--mint);text-transform:capitalize}.mini-status.alert{color:var(--warn)}
+    .error-box{padding:18px;border:1px solid #67342e;border-radius:13px;background:#24100e;color:#ffc2bc;line-height:1.55}footer{gap:16px;margin-top:24px;color:var(--muted);font-size:.8rem}code{color:#c9f7e7}
+    @media(max-width:900px){.intro{grid-template-columns:1fr}.mode-lock{text-align:left}.metric{grid-column:span 6}.controls,.report,.team-panel,.ops-panel{grid-column:1/-1}}
+    @media(max-width:620px){.shell{width:min(100% - 20px,1240px);padding-top:16px}.topbar{align-items:flex-start}.brand span{display:none}.intro{margin-top:22px}h1{font-size:2.45rem}.metric{grid-column:span 6;padding:14px}.metric strong{font-size:1.3rem}.controls,.report,.team-panel,.ops-panel,.history-panel{padding:16px}.form-grid,.report-body,.findings{grid-template-columns:1fr}.report-summary{grid-template-columns:1fr}.risk-ring{width:96px;height:96px}.decision-facts{grid-template-columns:1fr}.team-row{grid-template-columns:104px 1fr 40px}footer{display:block}footer span{display:block;margin-top:5px}}
   </style>
 </head>
 <body>
-<main>
-  <header>
-    <div>
-      <div class="eyebrow">Human authority · evidence · reversibility</div>
-      <h1>Al-Mehdi AI Safety Council</h1>
-      <p class="lede">A research platform where 100 bounded agents examine synthetic safety incidents, reach an explainable consensus and preserve a tamper-evident audit trail. Agents can recommend; only humans can authorise action.</p>
-    </div>
-    <div class="badge" id="health">Checking system…</div>
+<main class="shell">
+  <div class="topbar">
+    <div class="brand"><div class="mark" aria-hidden="true">AM</div><div><strong>Al-Mehdi</strong><span>Local safety operations laboratory</span></div></div>
+    <div class="health" id="health" role="status" aria-live="polite"><span class="dot"></span><span id="healthText">Connecting…</span></div>
+  </div>
+  <header class="intro">
+    <div><div class="eyebrow">Human authority · evidence · reversibility</div><h1>AI Safety Council</h1><p class="lede">One hundred bounded agents review synthetic or authorised safety events. They produce evidence and recommendations; the system never authorises external action.</p></div>
+    <div class="mode-lock">Authority boundary<strong>Human decision required</strong></div>
   </header>
-  <section class="grid">
-    <div class="panel metric"><span>Safety agents</span><strong id="agents">100</strong></div>
-    <div class="panel metric"><span>Specialist teams</span><strong id="teams">10</strong></div>
-    <div class="panel metric"><span>Execution mode</span><strong style="font-size:1.35rem">Advisory</strong></div>
-    <div class="panel metric"><span>External actions</span><strong style="font-size:1.35rem">Disabled</strong></div>
-    <div class="panel control">
-      <h2>Safe scenario laboratory</h2>
-      <label for="scenario">Choose a synthetic incident</label>
-      <select id="scenario"></select>
-      <button id="run">Run 100-agent review</button>
-      <div class="notice">This dashboard does not control external systems. It produces recommendations for a human operator and stores the result locally.</div>
+  <section class="metrics" aria-label="System status">
+    <div class="panel metric"><span>Safety agents</span><strong id="agents">—</strong></div>
+    <div class="panel metric"><span>Specialist teams</span><strong id="teams">—</strong></div>
+    <div class="panel metric"><span>Audit records shown</span><strong id="auditCount">—</strong></div>
+    <div class="panel metric"><span>External actions</span><strong class="safe">Disabled</strong></div>
+  </section>
+  <section class="workspace">
+    <div class="panel controls">
+      <div class="section-head"><div><h2>Start a safety review</h2><p>Use a controlled scenario or describe an authorised event.</p></div></div>
+      <div class="tabs" role="tablist" aria-label="Review type">
+        <button class="tab" id="scenarioTab" type="button" role="tab" aria-selected="true" aria-controls="scenarioPanel">Scenario</button>
+        <button class="tab" id="customTab" type="button" role="tab" aria-selected="false" aria-controls="customPanel">Custom event</button>
+      </div>
+      <div class="tab-panel" id="scenarioPanel" role="tabpanel" aria-labelledby="scenarioTab">
+        <div class="field"><label for="scenario">Synthetic incident</label><select id="scenario"></select></div>
+        <button class="primary" id="runScenario" type="button">Run 100-agent review</button>
+      </div>
+      <form class="tab-panel" id="customPanel" role="tabpanel" aria-labelledby="customTab" hidden>
+        <div class="field"><label for="summary">What happened?</label><textarea id="summary" maxlength="2000" required placeholder="Example: The model attempted to bypass an approval step and access restricted information."></textarea></div>
+        <div class="form-grid">
+          <div class="field"><label for="category">Category</label><select id="category"><option value="unspecified">Unspecified</option><option value="alignment">Alignment</option><option value="prompt_security">Prompt security</option><option value="data_security">Data security</option><option value="supply_chain">Supply chain</option><option value="governance">Governance</option><option value="assurance">Assurance</option></select></div>
+          <div class="field"><label for="severity">Initial severity</label><select id="severity"><option value="info">Information</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="critical">Critical</option></select></div>
+        </div>
+        <div class="field"><label for="requestedAction">Requested operator action</label><input id="requestedAction" maxlength="120" value="observe"></div>
+        <button class="primary" id="runCustom" type="submit">Analyse custom event</button>
+      </form>
+      <div class="notice">Recommendation-only environment. No network control, retaliation, self-modification or autonomous containment is available.</div>
     </div>
-    <div class="panel result">
-      <h2>Consensus report</h2>
-      <pre id="output">Select a scenario to begin.</pre>
+    <div class="panel report">
+      <div class="section-head"><div><h2>Consensus decision</h2><p id="reportMeta">No review has been run in this session.</p></div></div>
+      <div id="reportContent" aria-live="polite"><div class="empty"><div><strong>Ready for evidence</strong>Select a scenario or enter a custom event to consult all 100 agents.</div></div></div>
     </div>
   </section>
-  <footer>Al-Mehdi v0.1.0 · Local research environment · No autonomous retaliation or external actuation</footer>
+  <section class="lower-grid">
+    <div class="panel team-panel">
+      <div class="section-head"><div><h2>Team analysis</h2><p>Consensus scores and the strongest evidence-backed agent findings.</p></div></div>
+      <div id="teamContent"><div class="empty"><div><strong>No team findings yet</strong>Run a review to compare all ten specialist teams.</div></div></div>
+    </div>
+    <div class="panel ops-panel">
+      <div class="section-head"><div><h2>Validation controls</h2><p>Check the decision rules and audit integrity.</p></div></div>
+      <div class="ops-stack">
+        <div class="op-card"><h3>Six-scenario benchmark</h3><p>Checks expected escalation levels and confirms that external execution remains blocked.</p><button class="secondary" id="runBenchmark" type="button">Run safety benchmark</button><div class="op-result" id="benchmarkResult">Not run in this session.</div></div>
+        <div class="op-card"><h3>Audit-chain integrity</h3><p>Recalculates the SHA-256 chain over every locally stored review.</p><button class="secondary" id="verifyAudit" type="button">Verify audit trail</button><div class="op-result" id="auditResult">Waiting for verification.</div></div>
+      </div>
+    </div>
+  </section>
+  <section class="panel history-panel">
+    <div class="section-head"><div><h2>Recent reviewed events</h2><p>Latest records from the local tamper-evident SQLite audit trail.</p></div><button class="secondary" id="reloadHistory" type="button" style="width:auto">Reload</button></div>
+    <div class="table-wrap" id="historyContent"><table><thead><tr><th>Time</th><th>Event</th><th>Decision</th><th>Risk</th><th>Execution</th></tr></thead><tbody><tr><td colspan="5">Loading local history…</td></tr></tbody></table></div>
+  </section>
+  <footer><div>Al-Mehdi <span id="version">v0.2.0</span> · Local research environment</div><span>No autonomous retaliation or external actuation</span></footer>
 </main>
 <script>
-const output=document.getElementById('output'),run=document.getElementById('run'),scenario=document.getElementById('scenario');
-async function json(url,options){const r=await fetch(url,options);const data=await r.json();if(!r.ok)throw new Error(data.message||data.error);return data}
-async function init(){try{const [health,scenarios]=await Promise.all([json('/health'),json('/api/v1/scenarios')]);document.getElementById('health').textContent=health.status==='ok'?'System healthy':'System degraded';document.getElementById('agents').textContent=health.agents;document.getElementById('teams').textContent=health.teams;scenarios.scenarios.forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name.replaceAll('_',' ');scenario.appendChild(option)})}catch(e){document.getElementById('health').textContent='Connection error';output.textContent=e.message}}
-run.addEventListener('click',async()=>{run.disabled=true;output.textContent='Consulting 100 agents…';try{const report=await json('/api/v1/simulate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:scenario.value})});const d=report.decision;output.textContent=JSON.stringify({run_id:d.run_id,status:d.status,severity:d.severity,consensus_risk:d.consensus_risk,human_approval_required:d.human_approval_required,execution_authorized:d.execution_authorized,teams_reporting:d.teams_reporting,team_scores:d.team_scores,recommendations:d.recommendations,policy_reasons:d.policy_reasons},null,2)}catch(e){output.textContent=e.message}finally{run.disabled=false}});
+var get=function(id){return document.getElementById(id)};
+function safe(value){return String(value==null?"":value).replace(/[&<>"']/g,function(character){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[character]})}
+function human(value){return String(value==null?"":value).replaceAll("_"," ").replace(/\b\w/g,function(letter){return letter.toUpperCase()})}
+async function requestJson(url,options){var response=await fetch(url,options||{});var data;try{data=await response.json()}catch(error){throw new Error("The local service returned an unreadable response.")}if(!response.ok)throw new Error(data.message||data.error||("Request failed ("+response.status+")"));return data}
+function setBusy(button,busy,label){if(!button.dataset.label)button.dataset.label=button.textContent;button.disabled=busy;button.textContent=busy?label:button.dataset.label}
+function showConnectionError(error){get("health").className="health bad";get("healthText").textContent="Service unavailable";get("reportContent").innerHTML='<div class="error-box"><strong>Dashboard connection failed.</strong><br>'+safe(error.message)+'<br><br>Keep Terminal open with <code>python -m al_mehdi serve</code>, then refresh this page.</div>'}
+function switchTab(tab){var scenarioActive=tab==="scenario";get("scenarioTab").setAttribute("aria-selected",String(scenarioActive));get("customTab").setAttribute("aria-selected",String(!scenarioActive));get("scenarioPanel").hidden=!scenarioActive;get("customPanel").hidden=scenarioActive}
+function renderReport(report){
+  var decision=report.decision,event=report.event;
+  var severityClass=["high","critical","medium"].includes(decision.severity)?decision.severity:"";
+  var recommendations=decision.recommendations.map(function(item){return"<li>"+safe(item)+"</li>"}).join("");
+  var reasons=decision.policy_reasons.map(function(item){return"<li>"+safe(item)+"</li>"}).join("");
+  get("reportMeta").textContent=decision.run_id+" · "+new Date(decision.created_at).toLocaleString();
+  get("reportContent").innerHTML=
+    '<div class="report-summary"><div class="risk-ring" style="--risk:'+Math.max(0,Math.min(100,decision.consensus_risk))+'"><div class="risk-number"><strong>'+decision.consensus_risk+'</strong><span>risk / 100</span></div></div><div>'+
+    '<div class="status-line"><span class="pill '+severityClass+'">'+safe(human(decision.status))+'</span><span class="pill '+severityClass+'">'+safe(human(decision.severity))+'</span></div>'+
+    '<p class="event-summary">'+safe(event.summary)+'</p><div class="decision-facts">'+
+    '<div class="fact"><span>Human approval</span><strong>'+(decision.human_approval_required?"Required":"Not required")+'</strong></div>'+
+    '<div class="fact"><span>External execution</span><strong>'+(decision.execution_authorized?"Authorised":"Blocked")+'</strong></div>'+
+    '<div class="fact"><span>Reporting</span><strong>'+decision.teams_reporting+'/10 teams</strong></div></div></div></div>'+
+    '<div class="report-body"><div><h3>Recommendations</h3><ul class="clean-list">'+recommendations+'</ul></div><div><h3>Policy reasons</h3><ul class="clean-list">'+reasons+'</ul></div></div>'+
+    '<details><summary>View complete JSON report</summary><pre>'+safe(JSON.stringify(report,null,2))+'</pre></details>';
+  renderTeams(report)
+}
+function renderTeams(report){
+  var scores=Object.entries(report.decision.team_scores).sort(function(a,b){return b[1]-a[1]});
+  var bars=scores.map(function(item){return'<div class="team-row"><span class="team-name">'+safe(human(item[0]))+'</span><span class="bar"><span style="width:'+Math.max(2,Math.min(100,item[1]))+'%"></span></span><span class="team-score">'+Number(item[1]).toFixed(1)+'</span></div>'}).join("");
+  var findings=[].concat(report.findings||[]).sort(function(a,b){return(b.risk_score-a.risk_score)||(b.confidence-a.confidence)}).slice(0,8).map(function(finding){
+    var signals=finding.matched_signals.length?finding.matched_signals.map(safe).join(", "):"No direct keyword match";
+    return'<div class="finding"><div class="finding-head"><span>'+safe(finding.agent_name)+'</span><span>'+finding.risk_score+'</span></div><p>'+safe(human(finding.team))+' · confidence '+Math.round(finding.confidence*100)+'%</p><p class="signal">'+signals+'</p></div>'
+  }).join("");
+  get("teamContent").innerHTML='<div class="team-bars">'+bars+'</div><div class="findings">'+findings+'</div>'
+}
+async function loadHistory(){
+  try{
+    var payload=await requestJson("/api/v1/runs?limit=12"),records=payload.records||[];
+    get("auditCount").textContent=records.length?String(records.length)+"+":"0";
+    var rows=records.map(function(record){var event=record.payload.event||{},decision=record.payload.decision||{},alert=decision.status&&decision.status!=="monitor"?"alert":"";return'<tr><td>'+safe(new Date(record.created_at).toLocaleString())+'</td><td class="event-cell">'+safe(event.summary||record.record_id)+'</td><td><span class="mini-status '+alert+'">'+safe(human(decision.status||"recorded"))+'</span></td><td>'+safe(decision.consensus_risk==null?"—":decision.consensus_risk)+'</td><td>'+(decision.execution_authorized?"Authorised":"Blocked")+'</td></tr>'}).join("");
+    get("historyContent").innerHTML='<table><thead><tr><th>Time</th><th>Event</th><th>Decision</th><th>Risk</th><th>Execution</th></tr></thead><tbody>'+(rows||'<tr><td colspan="5">No reviews recorded yet.</td></tr>')+'</tbody></table>'
+  }catch(error){get("historyContent").innerHTML='<div class="error-box">'+safe(error.message)+'</div>'}
+}
+async function verifyAudit(){
+  var button=get("verifyAudit");setBusy(button,true,"Verifying…");
+  try{var result=await requestJson("/api/v1/audit/verify");get("auditResult").className="op-result "+(result.valid?"pass":"fail");get("auditResult").textContent=result.valid?("Valid chain · "+result.checked+" record"+(result.checked===1?"":"s")+" checked"):("Integrity failure at record "+result.failed_sequence)}
+  catch(error){get("auditResult").className="op-result fail";get("auditResult").textContent=error.message}finally{setBusy(button,false)}
+}
+async function runBenchmark(){
+  var button=get("runBenchmark");setBusy(button,true,"Running 600 assessments…");
+  try{var result=await requestJson("/api/v1/evaluate",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});get("benchmarkResult").className="op-result "+(result.passed?"pass":"fail");get("benchmarkResult").textContent=result.passed?("PASS · "+result.scenarios_passed+"/"+result.scenarios_total+" scenarios · execution blocked · audit valid"):("FAIL · "+result.scenarios_passed+"/"+result.scenarios_total+" scenarios passed");await Promise.all([loadHistory(),verifyAudit()])}
+  catch(error){get("benchmarkResult").className="op-result fail";get("benchmarkResult").textContent=error.message}finally{setBusy(button,false)}
+}
+async function runScenario(){
+  var button=get("runScenario");setBusy(button,true,"Consulting 100 agents…");
+  try{var report=await requestJson("/api/v1/simulate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({scenario:get("scenario").value})});renderReport(report);await Promise.all([loadHistory(),verifyAudit()])}
+  catch(error){get("reportContent").innerHTML='<div class="error-box">'+safe(error.message)+'</div>'}finally{setBusy(button,false)}
+}
+async function runCustom(event){
+  event.preventDefault();var summary=get("summary").value.trim();if(!summary)return;var button=get("runCustom");setBusy(button,true,"Consulting 100 agents…");
+  try{var report=await requestJson("/api/v1/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({summary:summary,source:"dashboard-manual",category:get("category").value,severity_hint:get("severity").value,requested_action:get("requestedAction").value.trim()||"observe",details:{environment:"operator-authorised local review"}})});renderReport(report);await Promise.all([loadHistory(),verifyAudit()])}
+  catch(error){get("reportContent").innerHTML='<div class="error-box">'+safe(error.message)+'</div>'}finally{setBusy(button,false)}
+}
+async function init(){
+  try{
+    var data=await Promise.all([requestJson("/health"),requestJson("/api/v1/scenarios")]),health=data[0],scenarios=data[1];
+    get("health").className="health "+(health.status==="ok"?"ok":"bad");get("healthText").textContent=health.status==="ok"?"System healthy":"System degraded";get("agents").textContent=health.agents;get("teams").textContent=health.teams;get("version").textContent="v"+health.version;
+    scenarios.scenarios.forEach(function(name){var option=document.createElement("option");option.value=name;option.textContent=human(name);get("scenario").appendChild(option)});
+    await Promise.all([loadHistory(),verifyAudit()])
+  }catch(error){showConnectionError(error)}
+}
+get("scenarioTab").addEventListener("click",function(){switchTab("scenario")});
+get("customTab").addEventListener("click",function(){switchTab("custom")});
+get("runScenario").addEventListener("click",runScenario);
+get("customPanel").addEventListener("submit",runCustom);
+get("runBenchmark").addEventListener("click",runBenchmark);
+get("verifyAudit").addEventListener("click",verifyAudit);
+get("reloadHistory").addEventListener("click",loadHistory);
 init();
 </script>
 </body>

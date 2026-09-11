@@ -2,7 +2,7 @@
 
 ## Supported version
 
-Only the latest release is supported. Version 0.1.0 is an experimental, local, recommendation-only system.
+Only the latest release is supported. Version 0.2.0 is an experimental, local, recommendation-only system.
 
 ## Reporting a vulnerability
 
@@ -19,5 +19,4 @@ Do not test against third-party systems. Do not access, retain or transmit data 
 
 ## Operational warning
 
-The local HTTP service has no authentication in version 0.1.0. Keep it bound to `127.0.0.1`. The Docker example exposes it only on the loopback interface.
-
+The local HTTP service has no authentication in version 0.2.0. Keep it bound to `127.0.0.1`. The Docker example exposes it only on the loopback interface.

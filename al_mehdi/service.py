@@ -9,6 +9,7 @@ from importlib.resources import files
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
+from .evaluation import run_benchmark
 from .models import SafetyEvent
 from .orchestrator import SafetyOrchestrator
 from .simulator import build_scenario, scenario_names
@@ -99,6 +100,9 @@ class SafetyRequestHandler(BaseHTTPRequestHandler):
             elif parsed.path == "/api/v1/simulate":
                 name = str(payload.get("scenario", ""))
                 report = self.orchestrator.analyze(build_scenario(name))
+            elif parsed.path == "/api/v1/evaluate":
+                self._json(run_benchmark(self.orchestrator), HTTPStatus.CREATED)
+                return
             else:
                 self._json({"error": "not_found"}, HTTPStatus.NOT_FOUND)
                 return
@@ -136,4 +140,3 @@ def serve(
         print("\nStopping Al-Mehdi.")
     finally:
         server.server_close()
-

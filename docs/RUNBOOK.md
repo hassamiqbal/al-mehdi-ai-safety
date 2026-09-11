@@ -42,5 +42,4 @@ Check:
 
 ## 6. Recovery
 
-Version 0.1.0 does not perform recovery actions. An authorised operator should follow the existing incident-response procedures of the system owner.
-
+Version 0.2.0 does not perform recovery actions. An authorised operator should follow the existing incident-response procedures of the system owner.

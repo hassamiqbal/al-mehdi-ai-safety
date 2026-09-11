@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 
+from .evaluation import run_benchmark
 from .models import SafetyEvent, Severity
 from .orchestrator import SafetyOrchestrator
 from .service import serve
@@ -64,6 +65,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     audit = subparsers.add_parser("audit-verify", help="Verify the hash-chained audit log")
     audit.add_argument("--json", action="store_true")
+
+    evaluate = subparsers.add_parser("evaluate", help="Run the six-scenario safety benchmark")
+    evaluate.add_argument("--json", action="store_true")
 
     server = subparsers.add_parser("serve", help="Start the local API and dashboard")
     server.add_argument("--host", default="127.0.0.1")
@@ -128,10 +132,21 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Audit chain valid: {result['valid']} ({result['checked']} records checked)")
         return 0 if result["valid"] else 1
 
+    if args.command == "evaluate":
+        result = run_benchmark(orchestrator)
+        if args.json:
+            print(json.dumps(result, indent=2))
+        else:
+            outcome = "PASS" if result["passed"] else "FAIL"
+            print(f"Safety benchmark: {outcome}")
+            print(f"  scenarios: {result['scenarios_passed']}/{result['scenarios_total']}")
+            print(f"  external execution blocked: {result['execution_invariant_passed']}")
+            print(f"  audit chain valid: {result['audit_chain_valid']}")
+        return 0 if result["passed"] else 1
+
     parser.error("Unknown command")
     return 2
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

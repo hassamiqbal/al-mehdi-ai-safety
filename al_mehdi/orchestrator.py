@@ -41,11 +41,10 @@ class SafetyOrchestrator:
         chain = self.audit.verify_chain()
         return {
             "status": "ok" if chain["valid"] else "degraded",
-            "version": "0.1.0",
+            "version": "0.2.0",
             "agents": len(self.agents),
             "teams": len({spec.team for spec in self.specs}),
             "mode": "recommend_only",
             "external_actuation": False,
             "audit_chain": chain,
         }
-
